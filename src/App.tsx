@@ -5,7 +5,7 @@ import './App.css';
 function App() {
   return (
     <div>
-      Theres nothing here lol
+      Theres nothing here yet
     </div>
   );
 }
