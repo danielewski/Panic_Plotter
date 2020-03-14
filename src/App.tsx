@@ -1,13 +1,13 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import styles from './App.module.scss';
+import DrinkTracker from "./maincontent/DrinkTracker";
 
 function App() {
-  return (
-    <div>
-      Theres nothing here yet
-    </div>
-  );
+    return (
+        <div className={styles.App}>
+            <DrinkTracker/>
+        </div>
+    );
 }
 
 export default App;
