@@ -1,4 +1,47 @@
 .DrinkTracker {
-  background-color: #9bfff8;;
-  height: 100%;
+  display: flex;
+  background-color: #d1faff;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100px;
+  height: fit-content;
+  max-height: 60vh;
+  width: 200px;
+  margin: 60px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 5px 10px 18px #888888;
+  font-family: Calibri;
+}
+
+.Submit {
+  padding-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100px;
+
+  button {
+    border-radius: 4px;
+    margin: 10px;
+  }
+}
+
+.Total {
+  padding-bottom: 25px;
+}
+
+.Log {
+  background-color: #e3ffff;
+  padding: 10px;
+  border-radius: 8px;
+  width: 150px;
+  font-size: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.5;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
