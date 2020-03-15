@@ -2,14 +2,30 @@ import React from 'react'
 import styles from './DrinkTracker.module.scss'
 import {DrinkTrackerLogValue} from "../models/DrinkTrackerLog";
 import {LocalDateTime} from 'js-joda'
+import * as firebase from "firebase";
 
 export default class DrinkTracker extends React.Component {
+
+    componentDidMount() {
+        // let log: DrinkTrackerLogValue[] = [];
+        // firebase.database().ref().once('value').then(function (snapshot) {
+        //     log = (snapshot.val());
+        //     for (let entry in log){
+        //         console.log({entry})
+        //     }
+        // });
+        // this.updateLog(log);
+    }
 
     state = {
         drinkInput: 0,
         drinkCount: 0,
         log: [] as DrinkTrackerLogValue[],
         buttonDisabled: true
+    }
+
+    updateLog = (log: DrinkTrackerLogValue[]) => {
+        this.setState({log: log});
     }
 
     updateDrinkInput = (drinkInput: number) => {
@@ -23,7 +39,7 @@ export default class DrinkTracker extends React.Component {
         const {drinkInput, drinkCount, log} = this.state;
         const updatedDrinkCount: number = drinkInput + drinkCount;
         log.unshift({date: LocalDateTime.now(), drinks: drinkInput});
-        this.setState({drinkCount: updatedDrinkCount, drinkInput: 0, log, buttonDisabled: true });
+        this.setState({drinkCount: updatedDrinkCount, drinkInput: 0, log, buttonDisabled: true});
     }
 
     localDateTimeToUsTime = (dateTime: LocalDateTime) => {
@@ -43,8 +59,6 @@ export default class DrinkTracker extends React.Component {
     }
 
     render() {
-
-
         return (
             <div className={styles.DrinkTracker}>
                 <span className={styles.Total}>Daily Total: <b>{this.state.drinkCount}</b></span>
