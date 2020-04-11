@@ -1,43 +1,18 @@
 import React from 'react'
-import styles from './DrinkTracker.module.scss'
 import {DrinkTrackerLogValue} from "../models/DrinkTrackerLog";
 import * as firebase from "firebase";
-import {LocalDateTime} from "@js-joda/core";
+import {connect} from "react-redux";
+import {AppState} from '../config/StoreConfiguration';
+import * as DrinkTrackerSelectors from "../reduxstate/DrinkTrackerSelectors";
+import {LocalDateTime} from "js-joda";
+import {Dispatch} from "redux";
+import styles from './DrinkTracker.module.scss'
 
-export default class DrinkTracker extends React.Component {
+type Props = StateProps & DispatchProps;
+
+class DrinkTracker extends React.Component<Props> {
     state = {
         drinkInput: 0,
-        drinkCount: 0,
-        log: [] as DrinkTrackerLogValue[],
-    }
-
-    componentDidMount() {
-        const {updateLocalLog, deserialize} = this;
-        firebase.database().ref('/drinks').once('value').then(function (snapshot) {
-            if (snapshot.val()) {
-                const data = Object.values(snapshot.val() as DrinkTrackerLogValue[] || undefined);
-                const deserializedData = deserialize(data).sort((a, b) => b.date.compareTo(a.date));
-                updateLocalLog(deserializedData);
-            }
-        });
-    };
-
-    deserialize = (data: DrinkTrackerLogValue[]) => {
-        return Object.values(data).map(entry => {
-                return {
-                    drinks: entry.drinks,
-                    date: LocalDateTime.parse(entry.date.toString())
-                }
-            }
-        );
-    }
-
-    updateLocalLog = (log: DrinkTrackerLogValue[]) => {
-        const drinkCount = this.getDrinkCount(log);
-        this.setState({
-            log: log,
-            drinkCount: drinkCount
-        });
     }
 
     getDrinkCount = (log: DrinkTrackerLogValue[]) => {
@@ -45,9 +20,9 @@ export default class DrinkTracker extends React.Component {
     }
 
     updateDrinkInput = (drinkInput: number) => {
+        console.log(this.props.drinkLog);
         this.setState(drinkInput > 0 ? {drinkInput: drinkInput, buttonDisabled: false} : {
-            drinkInput: 0,
-            buttonDisabled: true
+            drinkInput: 0
         });
     }
 
@@ -67,8 +42,8 @@ export default class DrinkTracker extends React.Component {
     }
 
     buildLog = () => {
-        const {log} = this.state;
-        return log.map((entry: DrinkTrackerLogValue) => {
+        const {drinkLog} = this.props;
+        return drinkLog.map((entry: DrinkTrackerLogValue) => {
             const drinkText = entry.drinks > 1 ? "Drinks" : "Drink";
             return `${entry.drinks} ${drinkText} ${this.localDateTimeToUsTime(entry.date)}`;
         });
@@ -80,7 +55,7 @@ export default class DrinkTracker extends React.Component {
     }
 
     getHistory = () => {
-        if (this.state.drinkCount === 0) {
+        if (this.props.drinkLog.length === 0) {
             return <></>;
         }
         return (
@@ -98,13 +73,14 @@ export default class DrinkTracker extends React.Component {
     }
 
     render() {
+        console.log(this.props.drinkCount);
         return (
             <div className={styles.DrinkTracker}>
-                <span className={styles.Total}>Daily Total: <b>{this.state.drinkCount}</b></span>
+                <span className={styles.Total}>Daily Total: <b>{this.props.drinkCount}</b></span>
                 <input type='number' value={this.state.drinkInput} placeholder={'Drinks to add'}
                        onChange={(e) => this.updateDrinkInput(parseInt(e.target.value))}/>
                 <div className={styles.Button}>
-                    <button disabled={this.state.drinkCount === 0} onClick={this.saveNewDrinks}>
+                    <button disabled={this.props.drinkCount === 0} onClick={this.saveNewDrinks}>
                         Submit
                     </button>
                 </div>
@@ -112,4 +88,16 @@ export default class DrinkTracker extends React.Component {
             </div>
         )
     }
+
 }
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+const mapStateToProps = (state: AppState) => ({
+    drinkLog: DrinkTrackerSelectors.drinkTrackerLogSelector(state),
+    drinkCount: DrinkTrackerSelectors.drinkTrackerSumSelector(state)
+});
+
+type DispatchProps = ReturnType<typeof mapDispatchToProps>;
+const mapDispatchToProps = (dispatch: Dispatch) => ({});
+
+export default connect(mapStateToProps, mapDispatchToProps)(DrinkTracker);

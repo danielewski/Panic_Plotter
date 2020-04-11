@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './App.module.scss';
 import DrinkTracker from "./maincontent/DrinkTracker";
 import * as firebase from "firebase";
-import {firebaseConfig} from "./models/FirebaseConfig";
+import {firebaseConfig} from "./config/FirebaseConfig";
 
 function App() {
     return (
